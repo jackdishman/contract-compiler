@@ -1,4 +1,4 @@
-# Authentic client contracts for certificates
+# How to deploy smart contracts
 
 Step 1: run `npx hardhat compile`
 Step 2: Copy `example.env` and create a `.env` file with your private keys (found in 1Password)
