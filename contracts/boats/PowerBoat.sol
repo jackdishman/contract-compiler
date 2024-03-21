@@ -11,12 +11,12 @@ contract PowerBoat {
     constructor(
         string memory _name,
         string memory _manufacturer,
-        uint _year,
-        uint _length,
+        uint8 _year,
+        uint8 _length,
         string[] memory _images,
-        uint _horsePower,
+        uint8 _horsePower,
         string memory _brand,
-        uint _engineYear
+        uint8 _engineYear
     ) {
         boat = new Boat(_name, _manufacturer, _year, _length, _images);
         engine = new Engine(_horsePower, _brand, _engineYear);
