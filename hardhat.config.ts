@@ -12,26 +12,13 @@ const config: HardhatUserConfig = {
       url: "https://mainnet.optimism.io",
       accounts: [PK ?? ``],
     },
-    'base-mainnet': {
+    "base-mainnet": {
       url: "https://mainnet.base.org",
       accounts: [PK ?? ``],
     },
     // for testnet
-    'base-sepolia': {
-      url: 'https://sepolia.base.org',
-      accounts: [PK ?? ``],
-    },
-    "optimism-goerli": {
-      url: "https://goerli.optimism.io",
-      accounts: [PK ?? ``],
-    },
-    "polygon-mumbai": {
-      url: "https://rpc-mumbai.maticvigil.com",
-      accounts: [PK ?? ``],
-    },
-    // for the local dev environment
-    "optimism-local": {
-      url: "http://localhost:8545",
+    "base-sepolia": {
+      url: "https://sepolia.base.org",
       accounts: [PK ?? ``],
     },
   },
@@ -47,12 +34,12 @@ const config: HardhatUserConfig = {
         network: "base-sepolia",
         chainId: 84532,
         urls: {
-         apiURL: "https://api-sepolia.basescan.org/api",
-         browserURL: "https://sepolia.basescan.org"
-        }
-      }
-    ]
-   },
+          apiURL: "https://api-sepolia.basescan.org/api",
+          browserURL: "https://sepolia.basescan.org",
+        },
+      },
+    ],
+  },
 };
 
 export default config;
