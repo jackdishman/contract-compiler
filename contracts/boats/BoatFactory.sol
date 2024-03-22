@@ -17,6 +17,7 @@ contract BoatFactory {
     }
 
     function createBoat(
+        address initialOwner,
         string memory _name, 
         string memory _manufacturer, 
         uint _year, 
@@ -24,6 +25,7 @@ contract BoatFactory {
         string[] memory _images
     ) public {
         Boat boat = new Boat(
+            initialOwner,
             _name, 
             _manufacturer, 
             _year, 
@@ -35,6 +37,7 @@ contract BoatFactory {
     }
 
     function createPowerBoat(
+        address initialOwner,
         string memory _name, 
         string memory _manufacturer, 
         uint8 _year, 
@@ -44,16 +47,24 @@ contract BoatFactory {
         string memory _brand, 
         uint8 _engineYear
     ) public {
+        Engine engine = new Engine(
+            initialOwner,
+            _horsePower, 
+            _brand, 
+            _engineYear
+        );
+        Engine[] memory engines = new Engine[](1);
+        engines[0] = engine;
+        address[] memory engineAddresses = new address[](1);
         PowerBoat powerBoat = new PowerBoat(
+            initialOwner,
             _name, 
             _manufacturer, 
             _year, 
             _length, 
             _images, 
-            _horsePower, 
-            _brand, 
-            _engineYear
-        );
+            engineAddresses
+            );
         emit PowerBoatCreated(address(powerBoat));
         boatRegistry.registerPowerBoat(address(powerBoat));
     }

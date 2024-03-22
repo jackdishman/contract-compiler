@@ -7,11 +7,14 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 contract BoatRegistry is Initializable, OwnableUpgradeable {
     address[] public boats;
     address[] public powerBoats;
+    address[] public engines;
     mapping(address => bool) public isRegistered;
     mapping(address => bool) private isRegistrarAllowed;
+    mapping(address => bool) public isEngineRegistered;
 
     event BoatRegistered(address indexed boatAddress);
     event PowerBoatRegistered(address indexed powerBoatAddress);
+    event EngineRegistered(address indexed engineAddress);
 
     function initialize(address[] memory _allowedRegistrars) public initializer {
         __Ownable_init(msg.sender);
@@ -41,5 +44,12 @@ contract BoatRegistry is Initializable, OwnableUpgradeable {
         powerBoats.push(_powerBoatAddress);
         isRegistered[_powerBoatAddress] = true;
         emit PowerBoatRegistered(_powerBoatAddress);
+    }
+
+    function registerEngine(address _engineAddress) public onlyAllowedRegistrar {
+        require(!isEngineRegistered[_engineAddress], "Engine is already registered.");
+        engines.push(_engineAddress);
+        isEngineRegistered[_engineAddress] = true;
+        emit EngineRegistered(_engineAddress);
     }
 }

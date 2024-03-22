@@ -1,32 +1,36 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-abstract contract IBoat {
-    function getDetails() public view virtual returns (string memory, string memory, uint, uint, string[] memory);
-}
+import "./utils/Ownable.sol";
 
-contract Boat is IBoat {
-    address public owner;
+contract Boat is Ownable {
     string public name;
     string public manufacturer;
     uint public year;
     uint public length;
     string[] public images;
 
-    constructor(string memory _name, string memory _manufacturer, uint _year, uint _length, string[] memory _images) {
+    constructor(
+        address initialOwner,
+        string memory _name, 
+        string memory _manufacturer, 
+        uint _year, 
+        uint _length, 
+        string[] memory _images
+    ) Ownable(initialOwner) { 
         name = _name;
         manufacturer = _manufacturer;
         year = _year;
         length = _length;
         images = _images;
-        owner = msg.sender;
     }
 
-    function setName(string memory _name) public {
+    // Ensure only the owner can modify the boat's details
+    function setName(string memory _name) public onlyOwner {
         name = _name;
     }
 
-    function addImage(string memory _image) public {
+    function addImage(string memory _image) public onlyOwner {
         images.push(_image);
     }
 
@@ -43,7 +47,7 @@ contract Boat is IBoat {
     }
 
     // Implementing the abstract method from IBoat
-    function getDetails() public view override returns (string memory, string memory, uint, uint, string[] memory) {
+    function getDetails() public view returns (string memory, string memory, uint, uint, string[] memory) {
         return (name, manufacturer, year, length, images);
     }
 }
