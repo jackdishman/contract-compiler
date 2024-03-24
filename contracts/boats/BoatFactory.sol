@@ -9,7 +9,12 @@ contract BoatFactory {
     BoatRegistry public boatRegistry;
 
     event BoatCreated(address indexed boatAddress);
+    event EngineCreated(address indexed engineAddress);
     event PowerBoatCreated(address indexed powerBoatAddress);
+
+    constructor(address _boatRegistryAddress) {
+        boatRegistry = BoatRegistry(_boatRegistryAddress);
+    }
 
     // Function to set the BoatRegistry address
     function setBoatRegistry(address _boatRegistryAddress) public {
@@ -21,16 +26,14 @@ contract BoatFactory {
         string memory _name, 
         string memory _manufacturer, 
         uint _year, 
-        uint _length, 
-        string[] memory _images
+        uint _length
     ) public {
         Boat boat = new Boat(
             initialOwner,
             _name, 
             _manufacturer, 
             _year, 
-            _length, 
-            _images
+            _length
         );
         emit BoatCreated(address(boat));
         boatRegistry.registerBoat(address(boat));
@@ -40,12 +43,26 @@ contract BoatFactory {
         address initialOwner,
         string memory _name, 
         string memory _manufacturer, 
-        uint8 _year, 
-        uint8 _length, 
-        string[] memory _images, 
-        uint8 _horsePower, 
+        uint _year, 
+        uint _length
+    ) public {
+        PowerBoat powerBoat = new PowerBoat(
+            initialOwner,
+            _name, 
+            _manufacturer, 
+            _year, 
+            _length,
+            new Engine[](0)
+            );
+        emit PowerBoatCreated(address(powerBoat));
+        boatRegistry.registerPowerBoat(address(powerBoat));
+    }
+
+    function createEngine(
+        address initialOwner,
+        uint _horsePower, 
         string memory _brand, 
-        uint8 _engineYear
+        uint _engineYear
     ) public {
         Engine engine = new Engine(
             initialOwner,
@@ -53,19 +70,11 @@ contract BoatFactory {
             _brand, 
             _engineYear
         );
-        Engine[] memory engines = new Engine[](1);
-        engines[0] = engine;
-        address[] memory engineAddresses = new address[](1);
-        PowerBoat powerBoat = new PowerBoat(
-            initialOwner,
-            _name, 
-            _manufacturer, 
-            _year, 
-            _length, 
-            _images, 
-            engineAddresses
-            );
-        emit PowerBoatCreated(address(powerBoat));
-        boatRegistry.registerPowerBoat(address(powerBoat));
+        emit EngineCreated(address(engine));
+        boatRegistry.registerEngine(address(engine));
+    }
+
+    function getBoatRegistryAddress() public view returns (address) {
+        return address(boatRegistry);
     }
 }
