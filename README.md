@@ -1,12 +1,24 @@
-# How to deploy smart contracts
+# How to deploy smart contracts using Forge
 
-Step 1: run `npx hardhat compile`
-Step 2: Copy `example.env` and create a `.env` file with your private keys (found in 1Password)
-Step 3: deploy the contract to one of the following chains using the corresponding commands:
+#### Base sepolia:
 
-- OP Goerli: `npx hardhat run --network optimism-goerli scripts/deploy.ts`
-- Polygon Mumbai: `npx hardhat run --network polygon-mumbai scripts/deploy.ts`
-- Polygon Mainnet: `npx hardhat run --network polygon scripts/deploy.ts`
+```
+forge create --rpc-url <your_rpc_url> \
+    --constructor-args "ForgeUSD" "FUSD" 18 1000000000000000000000 \
+    --private-key <your_private_key> \
+    --etherscan-api-key <your_etherscan_api_key> \
+    --verify \
+    src/MyToken.sol:MyToken
+
+forge create
+    --rpc-url https://sepolia.base.org \
+    --private-key <your_private_key> \
+    --etherscan-api-key <etherscan_api_key>
+    --constructor-args 0xd8D6F202Ef51210812FDaD1D521D6ab1Abc85Df7 "Test Boat" "Boston Whaler" "Center Console" 2023 21 \
+    --verify
+    contracts/boats/Boat.sol:Boat
+
+```
 
 ## Verification
 

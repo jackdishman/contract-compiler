@@ -21,6 +21,7 @@ contract BoatTest is Test {
             initialOwner,
             "Boaty McBoatface",
             "Boston Whaler",
+            "Center Console",
             2021,
             21
         );

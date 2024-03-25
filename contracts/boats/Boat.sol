@@ -8,6 +8,7 @@ import "./Record.sol";
 contract Boat is Ownable {
     string public name;
     string public manufacturer;
+    string public hullType;
     uint public year;
     uint public length;
 
@@ -21,11 +22,13 @@ contract Boat is Ownable {
         address initialOwner,
         string memory _name, 
         string memory _manufacturer, 
+        string memory _hullType,
         uint _year, 
         uint _length
     ) Ownable(initialOwner) { 
         name = _name;
         manufacturer = _manufacturer;
+        hullType = _hullType;
         year = _year;
         length = _length;
     }
@@ -82,4 +85,9 @@ contract Boat is Ownable {
         }
         return _records;
     }    
+
+    // Get the details of the boat
+    function getHullType() public view returns (string memory) {
+        return hullType;
+    }
 }

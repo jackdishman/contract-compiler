@@ -19,6 +19,7 @@ contract BoatTest is Test {
             initialOwner,
             "Boaty McBoatface",
             "Boston Whaler",
+            "Center Console",
             2021,
             21
         );
@@ -28,6 +29,7 @@ contract BoatTest is Test {
         assertEq(boat.owner(), initialOwner);
         assertEq(boat.name(), "Boaty McBoatface");
         assertEq(boat.manufacturer(), "Boston Whaler");
+        assertEq(boat.hullType(), "Center Console");
         assertEq(boat.year(), 2021);
         assertEq(boat.length(), 21);
     }
@@ -113,5 +115,37 @@ contract BoatTest is Test {
         boat.addRecord("title 1", "description 1", "https://example.com/image1.pdf", "pdf");
         boat.transferOwnership(newOwner);
         boat.getRecords();
+    }
+
+    function test_removeRecord() public {
+        boat.addRecord("title 1", "description 1", "https://example.com/image1.pdf", "pdf");
+        boat.addRecord("title 2", "description 2", "https://example.com/image2.pdf", "pdf");
+        boat.addRecord("title 3", "description 3", "https://example.com/image3.pdf", "pdf");
+        boat.removeRecord(1);
+        Record[] memory records = boat.getRecords();
+        assertEq(records.length, 2);
+        assertEq(records[0].title(), "title 1");
+        assertEq(records[0].description(), "description 1");
+        assertEq(records[0].data(), "https://example.com/image1.pdf");
+        assertEq(records[0].kind(), "pdf");
+        assertEq(records[1].title(), "title 3");
+        assertEq(records[1].description(), "description 3");
+        assertEq(records[1].data(), "https://example.com/image3.pdf");
+        assertEq(records[1].kind(), "pdf");
+    }
+
+    function testFail_removeRecordAsNonOwner() public {
+        boat.addRecord("title 1", "description 1", "https://example.com/image1.pdf", "pdf");
+        boat.transferOwnership(newOwner);
+        boat.removeRecord(0);
+    }
+
+    function testFail_removeRecordOutOfBounds() public {
+        boat.addRecord("title 1", "description 1", "https://example.com/image1.pdf", "pdf");
+        boat.removeRecord(1);
+    }
+
+    function test_getHullType() public {
+        assertEq(boat.getHullType(), "Center Console");
     }
 }

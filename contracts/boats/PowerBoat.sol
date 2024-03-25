@@ -16,10 +16,11 @@ contract PowerBoat is Boat {
         address initialOwner,
         string memory _name,
         string memory _manufacturer,
+        string memory _hullType,
         uint _year,
         uint _length,
         Engine[] memory _engines
-    ) Boat(initialOwner, _name, _manufacturer, _year, _length) {
+    ) Boat(initialOwner, _name, _manufacturer, _hullType, _year, _length) {
         for (uint i = 0; i < _engines.length; i++) {
             engines[i] = _engines[i];
             engineCount++;

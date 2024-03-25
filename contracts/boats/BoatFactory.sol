@@ -25,6 +25,7 @@ contract BoatFactory {
         address initialOwner,
         string memory _name, 
         string memory _manufacturer, 
+        string memory _hullType,
         uint _year, 
         uint _length
     ) public {
@@ -32,6 +33,7 @@ contract BoatFactory {
             initialOwner,
             _name, 
             _manufacturer, 
+            _hullType,
             _year, 
             _length
         );
@@ -43,6 +45,7 @@ contract BoatFactory {
         address initialOwner,
         string memory _name, 
         string memory _manufacturer, 
+        string memory _hullType,
         uint _year, 
         uint _length
     ) public {
@@ -50,6 +53,7 @@ contract BoatFactory {
             initialOwner,
             _name, 
             _manufacturer, 
+            _hullType,
             _year, 
             _length,
             new Engine[](0)
