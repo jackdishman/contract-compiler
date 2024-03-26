@@ -1,22 +1,28 @@
-# How to deploy smart contracts using Forge
+# Welcome to contracts! I recently switched from hardhat to Forge.
+
+# How to set up
+
+1. `pnpm install`
+2. copy `example.env` and make it `.env`
+3. Give feedback to JD or submit a PR if you feel inclined!
+
+# Commands
+
+## How to run tests
+
+`forge test -vv`
+
+## How to deploy smart contracts using Forge
 
 #### Base sepolia:
 
 ```
-forge create --rpc-url <your_rpc_url> \
-    --constructor-args "ForgeUSD" "FUSD" 18 1000000000000000000000 \
+forge create contracts/boats/Boat.sol:Boat --rpc-url https://sepolia.base.org \
     --private-key <your_private_key> \
-    --etherscan-api-key <your_etherscan_api_key> \
-    --verify \
-    src/MyToken.sol:MyToken
-
-forge create
-    --rpc-url https://sepolia.base.org \
-    --private-key <your_private_key> \
-    --etherscan-api-key <etherscan_api_key>
-    --constructor-args 0xd8D6F202Ef51210812FDaD1D521D6ab1Abc85Df7 "Test Boat" "Boston Whaler" "Center Console" 2023 21 \
+    --etherscan-api-key <etherscan_api_key> \
+    --constructor-args <initial_owner> "Test Boat" "Boston Whaler" "Center Console" 2023 21 \
     --verify
-    contracts/boats/Boat.sol:Boat
+
 
 ```
 
