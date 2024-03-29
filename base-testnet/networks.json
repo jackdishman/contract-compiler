@@ -1,0 +1,8 @@
+{
+  "base-sepolia": {
+    "BoatFactory": {
+      "address": "0xaA24C4e8ea092B719067fB8539e9540C6578F99d",
+      "startBlock": 7780044
+    }
+  }
+}
