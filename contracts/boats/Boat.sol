@@ -12,6 +12,13 @@ contract Boat is Ownable {
     uint public year;
     uint public length;
 
+    // Event definitions
+    event NameChanged(string newName);
+    event ImageAdded(uint index, string url, string label);
+    event ImageRemoved(uint index);
+    event RecordAdded(uint index, string title, string description, string data, string kind);
+    event RecordRemoved(uint index);
+
     mapping(uint => Image) public images;
     uint public imageCount;
 
@@ -36,11 +43,13 @@ contract Boat is Ownable {
     // Ensure only the owner can modify the boat's details
     function setName(string memory _name) public onlyOwner {
         name = _name;
+        emit NameChanged(_name);
     }
 
     // add a new image
     function addImage(string memory _url, string memory _label) public onlyOwner {
         images[imageCount] = new Image(_url, _label);
+        emit ImageAdded(imageCount, _url, _label);
         imageCount++;
     }
 
@@ -50,6 +59,7 @@ contract Boat is Ownable {
         for (uint i = _index; i < imageCount - 1; i++) {
             images[i] = images[i + 1];
         }
+        emit ImageRemoved(_index);
         imageCount--;
     }
 
@@ -65,6 +75,7 @@ contract Boat is Ownable {
     // add a new record
     function addRecord(string memory _title, string memory _description, string memory _data, string memory _kind) public onlyOwner {
         records[recordCount] = new Record(_title, _description, _data, _kind);
+        emit RecordAdded(recordCount, _title, _description, _data, _kind);
         recordCount++;
     }
 
@@ -74,6 +85,7 @@ contract Boat is Ownable {
         for (uint i = _index; i < recordCount - 1; i++) {
             records[i] = records[i + 1];
         }
+        emit RecordRemoved(_index);
         recordCount--;
     }
 

@@ -14,7 +14,34 @@
 
 ## How to deploy smart contracts using Forge
 
-#### Base sepolia:
+### Base sepolia:
+
+#### Step 1: Deploy BoatRegistry
+
+First off, we need to deploy a boat registry where new boats, PowerBoats, and Engines will be added to.
+
+```
+forge create contracts/boats/BoatRegistry.sol:BoatRegistry --rpc-url https://sepolia.base.org \
+    --private-key <PRIVATE_KEY> \
+    --etherscan-api-key <ETHERSCAN_API_KEY> \
+    --verify
+
+```
+
+#### Step 2: Set up the BoatFactory
+
+Now that we have the address of the BoatRegistry, take that address and use it to construct a BoatFactory
+
+```
+forge create contracts/boats/BoatFactory.sol:BoatFactory --rpc-url https://sepolia.base.org \
+    --private-key <PRIVATE_KEY> \
+    --etherscan-api-key <ETHERSCAN_API_KEY> \
+    --constructor-args <REGISTRY_ADDRESS_FROM_STEP_1> \
+    --verify
+
+```
+
+#### Generic Commands
 
 ```
 forge create contracts/boats/Boat.sol:Boat --rpc-url https://sepolia.base.org \
@@ -25,9 +52,3 @@ forge create contracts/boats/Boat.sol:Boat --rpc-url https://sepolia.base.org \
 
 
 ```
-
-## Verification
-
-Run `npx hardhat verify --constructor-args verify/params.js --network NETWORK_NAME CONTRACT_ADDRESS`
-
-- Network names can be found in hardhat config
