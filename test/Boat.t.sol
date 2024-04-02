@@ -146,6 +146,62 @@ contract BoatTest is Test {
     }
 
     function test_getHullType() public {
-        assertEq(boat.getHullType(), "Center Console");
+        assertEq(boat.hullType(), "Center Console");
     }
+
+    function test_getYear() public {
+        assertEq(boat.year(), 2021);
+    }
+
+    function test_getLength() public {
+        assertEq(boat.length(), 21);
+    }
+
+    function test_getIsStolen() public {
+        assertEq(boat.isStolen(), false);
+    }
+
+    function test_setIsStolen() public {
+        boat.markStolen(true);
+        assertEq(boat.isStolen(), true);
+    }
+
+    function test_checkIsStolenByDefault() public {
+        Boat newBoat = new Boat(
+            initialOwner,
+            "Boaty McBoatface",
+            "Boston Whaler",
+            "Center Console",
+            2021,
+            21
+        );
+        assertEq(newBoat.isStolen(), false);
+    }
+
+    function test_setIsStolenTwice() public {
+        boat.markStolen(true);
+        boat.markStolen(false);
+        assertEq(boat.isStolen(), false);
+    }
+
+    function testFail_setIsStolenAsNonOwner() public {
+        boat.transferOwnership(newOwner);
+        boat.markStolen(true);
+    }
+
+    function test_setHIN() public {
+        boat.setHIN("123456789");
+        assertEq(boat.HIN(), "123456789");
+    }
+
+    function testFail_setHINAsNonOwner() public {
+        boat.transferOwnership(newOwner);
+        boat.setHIN("123456789");
+    }
+
+    function testFail_setHINTwice() public {
+        boat.setHIN("123456789");
+        boat.setHIN("987654321");
+    }
+
 }

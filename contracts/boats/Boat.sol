@@ -11,6 +11,8 @@ contract Boat is Ownable {
     string public hullType;
     uint public year;
     uint public length;
+    string public HIN;
+    bool public isStolen;
 
     // Event definitions
     event NameChanged(string newName);
@@ -18,6 +20,7 @@ contract Boat is Ownable {
     event ImageRemoved(uint index);
     event RecordAdded(uint index, string title, string description, string data, string kind);
     event RecordRemoved(uint index);
+    event MarkedStolen(bool isStolen);
 
     mapping(uint => Image) public images;
     uint public imageCount;
@@ -98,8 +101,15 @@ contract Boat is Ownable {
         return _records;
     }    
 
-    // Get the details of the boat
-    function getHullType() public view returns (string memory) {
-        return hullType;
+    // Mark the boat as stolen
+    function markStolen(bool _isStolen) public onlyOwner {
+        isStolen = _isStolen;
+        emit MarkedStolen(_isStolen);
+    }
+
+    // set the Hull Identification Number (should only be called once)
+    function setHIN(string memory _HIN) public onlyOwner {
+        require(bytes(HIN).length == 0, "HIN already set");
+        HIN = _HIN;
     }
 }
