@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 
 import "./Boat.sol";
 import "./Engine.sol";
-import "./utils/Ownable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract PowerBoat is Boat {
     mapping(uint => Engine) public engines;
