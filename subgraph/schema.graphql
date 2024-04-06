@@ -1,0 +1,7 @@
+type BoatCreated @entity(immutable: true) {
+  id: Bytes!
+  boatAddress: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
