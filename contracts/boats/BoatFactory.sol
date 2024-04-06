@@ -1,46 +1,44 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
 import "./Boat.sol";
-import "./BoatRegistry.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract BoatFactory is Ownable {
-    BoatRegistry public boatRegistry;
+contract BoatFactory {
+    string public name;
 
-    event BoatCreated(address indexed boatAddress);
+    event BoatCreated(address boatAddress);
 
-    constructor(address _boatRegistryAddress) Ownable(msg.sender) {
-        boatRegistry = BoatRegistry(_boatRegistryAddress);
+    constructor(string memory _name) {
+        name = _name;
     }
 
-    // Function to set the BoatRegistry address
-    function setBoatRegistry(address _boatRegistryAddress) public onlyOwner(){
-        boatRegistry = BoatRegistry(_boatRegistryAddress);
-    }
-
+    // Function to create a new Boat
     function createBoat(
         address initialOwner,
-        string memory _name, 
-        string memory _manufacturer, 
+        string memory _name,
+        string memory _manufacturer,
         string memory _hullType,
-        uint _year, 
-        uint _length
-    ) public returns (Boat) {
-        Boat boat = new Boat(
+        uint _year,
+        uint _length,
+        string memory _metadata,
+        string memory _location
+    ) public returns (address) {
+        // Create a new Boat and assign ownership to the initialOwner
+        Boat newBoat = new Boat(
             initialOwner,
-            _name, 
-            _manufacturer, 
+            _name,
+            _manufacturer,
             _hullType,
-            _year, 
-            _length
+            _year,
+            _length,
+            _metadata,
+            _location
         );
-        emit BoatCreated(address(boat));
-        boatRegistry.registerBoat(address(boat));
-        return boat;
-    }
 
-    function getBoatRegistryAddress() public view returns (address) {
-        return address(boatRegistry);
+        // Emit an event with the address of the created Boat
+        emit BoatCreated(address(newBoat));
+
+        // Return the address of the newly created Boat
+        return address(newBoat);
     }
 }

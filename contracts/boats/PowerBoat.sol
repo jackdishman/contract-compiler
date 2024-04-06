@@ -19,8 +19,21 @@ contract PowerBoat is Boat {
         string memory _hullType,
         uint _year,
         uint _length,
+        string memory _metadata,
+        string memory _location,
         Engine[] memory _engines
-    ) Boat(initialOwner, _name, _manufacturer, _hullType, _year, _length) {
+    )
+        Boat(
+            initialOwner,
+            _name,
+            _manufacturer,
+            _hullType,
+            _year,
+            _length,
+            _metadata,
+            _location
+        )
+    {
         for (uint i = 0; i < _engines.length; i++) {
             engines[i] = _engines[i];
             engineCount++;
@@ -29,7 +42,10 @@ contract PowerBoat is Boat {
 
     // Add a new engine to the powerboat
     function addEngine(Engine _engine) public onlyOwner {
-        require(engineCount < MAX_ENGINES, "Maximum number of engines reached.");
+        require(
+            engineCount < MAX_ENGINES,
+            "Maximum number of engines reached."
+        );
         engines[engineCount] = _engine;
         engineCount++;
     }
@@ -51,5 +67,4 @@ contract PowerBoat is Boat {
         }
         return _engines;
     }
-
 }
