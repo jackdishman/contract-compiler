@@ -14,8 +14,6 @@
 
 ## How to deploy smart contracts using Forge
 
-### Base sepolia:
-
 #### Step 1: Deploy BoatRegistry
 
 First off, we need to deploy a boat registry where new boats, PowerBoats, and Engines will be added to.
