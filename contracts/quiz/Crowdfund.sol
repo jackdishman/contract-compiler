@@ -23,17 +23,17 @@ contract Crowdfunding is Ownable {
         uint256 _deadline,
         address _recipient,
         address _paymentTokenAddress,
-        address _priceFeedAddress // Chainlink ETH/USD price feed on Base
-    ) {
+        address _priceFeedAddress
+    ) Ownable(msg.sender) {
         recipient = _recipient;
         paymentTokenAddress = _paymentTokenAddress;
         targetAmountInUSD = _targetAmountInUSD;
         deadline = _deadline;
-        priceFeed = AggregatorV3Interface(_priceFeedAddress); // Initialize price feed (ETH/USD)
+        priceFeed = AggregatorV3Interface(_priceFeedAddress);
     }
 
-    // Allows a user to contribute in ETH, sent immediately to the recipient
-    function contributeETH() external payable {
+    // Contribute ETH directly
+    function contributeETH() public payable {
         require(msg.value > 0, "Contribution must be greater than 0");
         require(block.timestamp <= deadline || deadline == 0, "Campaign has expired.");
 
@@ -43,12 +43,12 @@ contract Crowdfunding is Ownable {
         emit ContributionETH(msg.sender, msg.value);
     }
 
-    // Allows a user to contribute in USDC, sent immediately to the recipient
+    // Contribute USDC
     function contributeUSDC(uint256 amount) external {
         require(amount > 0, "Contribution must be greater than 0");
         require(block.timestamp <= deadline || deadline == 0, "Campaign has expired.");
 
-        _safeTransferFrom(paymentTokenAddress, msg.sender, recipient, amount);
+        IERC20(paymentTokenAddress).transferFrom(msg.sender, recipient, amount);
         usdcRaised += amount;
 
         emit ContributionUSDC(msg.sender, amount);
@@ -67,35 +67,22 @@ contract Crowdfunding is Ownable {
     // Get the current ETH price in USD (Chainlink oracle)
     function getEthPriceInUSD() public view returns (uint256) {
         (, int256 price, , ,) = priceFeed.latestRoundData();
-        return uint256(price) * 1e10; // Adjust to 18 decimals
+        require(price > 0, "Invalid price data"); // Ensure we don't get a negative or zero price
+        return uint256(price); // Price is already in 8 decimals, no need to adjust further
     }
 
-    // Calculate the total amount raised in USD by converting ETH to USD using Chainlink
+    // Calculate the total amount raised in USD, returning a value in dollars (with 2 decimal places)
     function totalRaisedInUSD() public view returns (uint256) {
-        uint256 ethRaisedInUSD = (ethRaised * getEthPriceInUSD()) / 1e18;
-        return ethRaisedInUSD + usdcRaised; // Combine ETH (converted) and USDC amounts
+        uint256 ethPriceInUSD = getEthPriceInUSD(); // ETH price from Chainlink with 8 decimals
+        uint256 ethRaisedInUSD = (ethRaised * ethPriceInUSD) / 1e18; // Convert ETH (18 decimals) to USD
+        uint256 totalUSD = ethRaisedInUSD + usdcRaised; // Combine ETH (converted) and USDC amounts
+
+        // Convert the total raised to a 2-decimal USD format
+        return totalUSD / 1e6; // Dividing by 1e6 to convert to standard USD with 2 decimal places
     }
 
     // Fallback function to handle receiving ETH directly
     receive() external payable {
         contributeETH();
-    }
-
-    // Safely transfer tokens from one address to another
-    function _safeTransferFrom(
-        address token,
-        address sender,
-        address recipient,
-        uint256 amount
-    ) internal {
-        (bool success, bytes memory data) = token.call(
-            abi.encodeWithSelector(
-                IERC20.transferFrom.selector,
-                sender,
-                recipient,
-                amount
-            )
-        );
-        require(success && (data.length == 0 || abi.decode(data, (bool))), "Transfer failed");
     }
 }
