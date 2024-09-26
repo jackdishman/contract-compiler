@@ -1,5 +1,5 @@
 [profile.default]
-src = "contracts/boats"
+src = "contracts/quiz"
 out = "artifacts"
 libs = ["lib"]
 test = "test"
