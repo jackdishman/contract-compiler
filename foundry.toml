@@ -1,5 +1,5 @@
 [profile.default]
-src = "contracts/quiz"
+src = "contracts/proxy"
 out = "artifacts"
 libs = ["lib"]
 test = "test"
