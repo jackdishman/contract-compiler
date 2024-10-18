@@ -11,6 +11,7 @@ contract ReferralContract is ReentrancyGuard {
 
     mapping(address => bool) public hasSigned;
     mapping(address => bool) public allowedReferrals;
+    address[] public referralList; // Stores all referral addresses
     uint public maxSigners = 10;
 
     event ReferralAccepted(address indexed referrer, address indexed referral);
@@ -43,6 +44,7 @@ contract ReferralContract is ReentrancyGuard {
             address referral = initialReferrals[i];
             require(referral != address(0), "Invalid referral address.");
             allowedReferrals[referral] = true;
+            referralList.push(referral); // Add to referral list
             emit ReferralAdded(_owner, referral);
         }
     }
@@ -76,6 +78,7 @@ contract ReferralContract is ReentrancyGuard {
     function addReferral(address referralAddress) external onlyOwner {
         require(referralAddress != address(0), "Invalid referral address.");
         allowedReferrals[referralAddress] = true;
+        referralList.push(referralAddress); // Add to referral list
         emit ReferralAdded(owner, referralAddress);
     }
 
@@ -89,6 +92,27 @@ contract ReferralContract is ReentrancyGuard {
             "New signature goal must be greater than current signatures."
         );
         signatureGoal = newSignatureGoal;
+    }
+
+    // New function to get all accepted referral addresses
+    function getAcceptedReferrals() external view returns (address[] memory) {
+        uint count = 0;
+        address[] memory tempAddresses = new address[](referralList.length);
+
+        for (uint i = 0; i < referralList.length; i++) {
+            address referral = referralList[i];
+            if (hasSigned[referral]) {
+                tempAddresses[count] = referral;
+                count++;
+            }
+        }
+
+        address[] memory acceptedReferrals = new address[](count);
+        for (uint j = 0; j < count; j++) {
+            acceptedReferrals[j] = tempAddresses[j];
+        }
+
+        return acceptedReferrals;
     }
 }
 
