@@ -1,5 +1,5 @@
 [profile.default]
-src = "contracts/proxy"
+src = "contracts/proxy/token"
 out = "artifacts"
 libs = ["lib"]
 test = "test"

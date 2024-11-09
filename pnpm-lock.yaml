@@ -23,6 +23,9 @@ importers:
       '@openzeppelin/contracts-upgradeable':
         specifier: ^5.0.2
         version: 5.0.2(@openzeppelin/contracts@5.0.2)
+      '@uniswap/v3-core':
+        specifier: ^1.0.1
+        version: 1.0.1
       dotenv:
         specifier: ^16.0.3
         version: 16.4.5
@@ -733,6 +736,10 @@ packages:
 
   '@types/semver@7.5.8':
     resolution: {integrity: sha512-I8EUhyrgfLrcTkzV3TSsGyl1tSuPrEDzr0yd5m90UgNxQkyDXULk3b6MlQqTCpZpNtWe1K0hzclnZkTcLBe2UQ==}
+
+  '@uniswap/v3-core@1.0.1':
+    resolution: {integrity: sha512-7pVk4hEm00j9tc71Y9+ssYpO6ytkeI0y7WE9P6UcmNzhxPePwyAxImuhVsTqWK9YFvzgtvzJHi64pBl4jUzKMQ==}
+    engines: {node: '>=10'}
 
   abbrev@1.0.9:
     resolution: {integrity: sha512-LEyx4aLEC3x6T0UguF6YILf+ntvmOaWsVfENmIW0E9H09vKlLDGelMjjSm0jkDHALj8A8quZ/HapKNigzwge+Q==}
@@ -3864,6 +3871,8 @@ snapshots:
       '@types/node': 20.11.20
 
   '@types/semver@7.5.8': {}
+
+  '@uniswap/v3-core@1.0.1': {}
 
   abbrev@1.0.9: {}
 

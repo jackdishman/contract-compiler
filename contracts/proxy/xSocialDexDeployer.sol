@@ -3,11 +3,11 @@ pragma solidity ^0.8.25;
 
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {TickMath} from "@uniswap/v3-core/contracts/libraries/TickMath.sol";
-
+import {TickMath} from "./uniswap/TickMath.sol";
 import {INonfungiblePositionManager, IUniswapV3Factory, ILockerFactory, ILocker, ExactInputSingleParams, ISwapRouter} from "./interface.sol";
 import {Bytes32AddressLib} from "./Bytes32AddressLib.sol";
 
+// Interface for the ReferralContract to access the isComplete variable
 interface IReferralContract {
     function isComplete() external view returns (bool);
 }
@@ -36,9 +36,9 @@ contract SocialDexDeployer is Ownable {
 
     address public taxCollector;
     uint64 public defaultLockingPeriod = 33275115461;
-    uint8 public taxRate = 25; // 25 / 1000 -> 2.5 %
-    uint8 public lpFeesCut = 50; // 5 / 100 -> 5%
-    uint8 public protocolCut = 30; // 3 / 100 -> 3%
+    uint8 public taxRate = 25; // 2.5%
+    uint8 public lpFeesCut = 50; // 5%
+    uint8 public protocolCut = 30; // 3%
     ILockerFactory public liquidityLocker;
 
     address public weth;
@@ -103,7 +103,7 @@ contract SocialDexDeployer is Ownable {
         require(address(token) < weth, "Invalid salt");
         require(_supply >= _supply, "Invalid supply amount");
 
-        uint160 sqrtPriceX96 = _initialTick.getSqrtRatioAtTick();
+        uint160 sqrtPriceX96 = TickMath.getSqrtPriceAtTick(_initialTick);
         address pool = uniswapV3Factory.createPool(address(token), weth, _fee);
         IUniswapV3Factory(pool).initialize(sqrtPriceX96);
 
@@ -134,22 +134,19 @@ contract SocialDexDeployer is Ownable {
         );
 
         positionManager.safeTransferFrom(address(this), lockerAddress, tokenId);
-
         ILocker(lockerAddress).initializer(tokenId);
 
         uint256 protocolFees = (msg.value * protocolCut) / 1000;
         uint256 remainingFundsToBuyTokens = msg.value - protocolFees;
 
-        // send to 0x04F6ef12a8B6c2346C8505eE4Cff71C43D2dd825
-
         if (msg.value > 0) {
             ExactInputSingleParams memory swapParams = ExactInputSingleParams({
-                tokenIn: weth, // The token we are exchanging from (ETH wrapped as WETH)
+                tokenIn: weth, // The token we are exchanging from (WETH)
                 tokenOut: address(token), // The token we are exchanging to
                 fee: _fee, // The pool fee
                 recipient: msg.sender, // The recipient address
-                amountIn: remainingFundsToBuyTokens, // The amount of ETH (WETH) to be swapped
-                amountOutMinimum: 0, // Minimum amount of DAI to receive
+                amountIn: remainingFundsToBuyTokens, // The amount of WETH to be swapped
+                amountOutMinimum: 0, // Minimum amount to receive
                 sqrtPriceLimitX96: 0 // No price limit
             });
 
@@ -173,18 +170,19 @@ contract SocialDexDeployer is Ownable {
             _symbol,
             _supply,
             _supply,
-            lockerAddress
+            lockerAddress,
+            _referralContract
         );
     }
 
     function initialSwapTokens(address token, uint24 _fee) public payable {
         ExactInputSingleParams memory swapParams = ExactInputSingleParams({
-            tokenIn: weth, // The token we are exchanging from (ETH wrapped as WETH)
+            tokenIn: weth, // The token we are exchanging from (WETH)
             tokenOut: address(token), // The token we are exchanging to
             fee: _fee, // The pool fee
             recipient: msg.sender, // The recipient address
-            amountIn: msg.value, // The amount of ETH (WETH) to be swapped
-            amountOutMinimum: 0, // Minimum amount of DAI to receive
+            amountIn: msg.value, // The amount of WETH to be swapped
+            amountOutMinimum: 0, // Minimum amount to receive
             sqrtPriceLimitX96: 0 // No price limit
         });
 
@@ -192,11 +190,13 @@ contract SocialDexDeployer is Ownable {
         ISwapRouter(swapRouter).exactInputSingle{value: msg.value}(swapParams);
     }
 
+    // [MODIFIED] Updated predictToken function to include referralContract
     function predictToken(
         address deployer,
         string calldata name,
         string calldata symbol,
         uint256 supply,
+        address referralContract, // [ADDED]
         bytes32 salt
     ) public view returns (address) {
         bytes32 create2Salt = keccak256(abi.encode(deployer, salt));
@@ -209,22 +209,31 @@ contract SocialDexDeployer is Ownable {
                     keccak256(
                         abi.encodePacked(
                             type(Token).creationCode,
-                            abi.encode(name, symbol, supply)
+                            abi.encode(name, symbol, supply, referralContract) // [MODIFIED]
                         )
                     )
                 )
             ).fromLast20Bytes();
     }
 
+    // [MODIFIED] Updated generateSalt function to include referralContract
     function generateSalt(
         address deployer,
         string calldata name,
         string calldata symbol,
-        uint256 supply
+        uint256 supply,
+        address referralContract // [ADDED]
     ) external view returns (bytes32 salt, address token) {
         for (uint256 i; ; i++) {
             salt = bytes32(i);
-            token = predictToken(deployer, name, symbol, supply, salt);
+            token = predictToken(
+                deployer,
+                name,
+                symbol,
+                supply,
+                referralContract,
+                salt
+            ); // [MODIFIED]
             if (token < weth && token.code.length == 0) {
                 break;
             }

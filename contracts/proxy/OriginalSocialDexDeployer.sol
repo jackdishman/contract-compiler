@@ -8,21 +8,13 @@ import {TickMath} from "@uniswap/v3-core/contracts/libraries/TickMath.sol";
 import {INonfungiblePositionManager, IUniswapV3Factory, ILockerFactory, ILocker, ExactInputSingleParams, ISwapRouter} from "./interface.sol";
 import {Bytes32AddressLib} from "./Bytes32AddressLib.sol";
 
-interface IReferralContract {
-    function isComplete() external view returns (bool);
-}
-
 contract Token is ERC20 {
-    address public referralContract;
-
     constructor(
         string memory name_,
         string memory symbol_,
-        uint256 maxSupply_,
-        address _referralContract
+        uint256 maxSupply_
     ) ERC20(name_, symbol_) {
         _mint(msg.sender, maxSupply_);
-        referralContract = _referralContract;
     }
 
     function decimals() public view virtual override returns (uint8) {
@@ -54,8 +46,7 @@ contract SocialDexDeployer is Ownable {
         string symbol,
         uint256 supply,
         uint256 _supply,
-        address lockerAddress,
-        address referralContract
+        address lockerAddress
     );
 
     constructor(
@@ -83,8 +74,7 @@ contract SocialDexDeployer is Ownable {
         int24 _initialTick,
         uint24 _fee,
         bytes32 _salt,
-        address _deployer,
-        address _referralContract
+        address _deployer
     ) external payable returns (Token token, uint256 tokenId) {
         int24 tickSpacing = uniswapV3Factory.feeAmountTickSpacing(_fee);
 
@@ -96,8 +86,7 @@ contract SocialDexDeployer is Ownable {
         token = new Token{salt: keccak256(abi.encode(msg.sender, _salt))}(
             _name,
             _symbol,
-            _supply,
-            _referralContract
+            _supply
         );
 
         require(address(token) < weth, "Invalid salt");
